@@ -11,6 +11,11 @@ import com.example.messageapp.Activities.chatActivity;
 import com.example.messageapp.Models.User;
 import com.example.messageapp.R;
 import com.example.messageapp.databinding.RowConversationBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -38,6 +43,33 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
     public void onBindViewHolder(@NonNull userViewHolder holder, int position) {
         User user=users.get(position);
         holder.binding.userName.setText(user.getUname());
+
+        String senderId= FirebaseAuth.getInstance().getUid();
+
+        String senderRoom = senderId+user.getUid();
+
+        FirebaseDatabase.getInstance().getReference()
+                .child("chats")
+                .child(senderRoom)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.exists()) {
+                            String lastMsg = snapshot.child("lastMsg").getValue(String.class);
+                            long time = snapshot.child("lastTime").getValue(Long.class);
+                            holder.binding.lastMessage.setText(lastMsg);
+                            holder.binding.messageTime.setText(Long.toString(time));
+                        }
+                        else
+                            holder.binding.lastMessage.setText("Tap To Chat");
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
         Glide.with(context).load(user.getProfileImage()).placeholder(R.drawable.avatar).into(holder.binding.profile);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

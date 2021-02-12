@@ -30,9 +30,12 @@ com.example.messageapp.Adapters.userAdapter userAdapter;
         binding=ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         database=FirebaseDatabase.getInstance();
+
         users=new ArrayList<>();
         userAdapter=new userAdapter(this,users);
+
         binding.recyclerView.setAdapter(userAdapter);
+
         database.getReference().child("users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
