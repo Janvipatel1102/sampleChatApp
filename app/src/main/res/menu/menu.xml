@@ -6,7 +6,7 @@
         android:icon="@drawable/ic_chat"
         android:title="Chats" />
     <item
-        android:id="@+id/us"
+        android:id="@+id/status"
         android:icon="@drawable/status"
         android:title="Status" />
     <item
